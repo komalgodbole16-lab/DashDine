@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Restaurant } from "../models/reataurant.js";
+import { Restaurant } from "../models/restaurant.js";
 import jwt from 'jsonwebtoken'
 import { User } from "../models/user.js";
 import { Booking } from "../models/Booking.js";

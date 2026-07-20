@@ -4,7 +4,7 @@ export interface IRestaurant extends Document{
     name: string;
     slug: string;
     description: string;
-    cuision: string;
+    cuisine: string;
     priceRange: "₹" | "₹₹₹" | "₹₹₹₹";
     rating: number;
     reviewCount: number;
@@ -28,7 +28,7 @@ const RestaurantSchema = new Schema<IRestaurant>(
     name: {type : String, required: true, trim: true },
     slug: {type : String, required: true, unique: true, trim: true, lowercase: true },
     description: {type : String, required: true },
-    cuision: {type : String, required: true, trim: true },
+    cuisine: {type : String, required: true, trim: true },
     priceRange: {type : String, enum: ["₹" , "₹₹₹" , "₹₹₹₹"], required: true },
     rating: {type : Number, default: 5.0, min: 1, max: 5 },
     reviewCount: {type : Number, default: 0 },
