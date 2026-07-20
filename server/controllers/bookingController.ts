@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.js";
-import { Restaurant } from "../models/reataurant.js";
+import { Restaurant } from "../models/restaurant.js";
 import { Booking } from "../models/Booking.js";
 
 
