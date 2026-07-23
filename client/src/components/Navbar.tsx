@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/AppContext.tsx";
 import { Menu, X, LogOut, LayoutDashboard, ShieldCheck } from "lucide-react";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
     const { user, logout, setAuthModalOpen } = useAppContext();
@@ -44,26 +45,26 @@ export default function Navbar() {
                 {/* Logo */}
                 <div className="flex items-center gap-12">
                     <Link to="/">
-                        <img src="/logo.svg" alt="Logo" className={`h-8.5 ${scrolled || (location.pathname === "/" && "invert")}`} />
+                        <img src={logo} alt="Logo" className={`h-16 ${scrolled || (location.pathname === "/" && "invert")}`} />
                     </Link>
 
                     {/* Desktop Navigation Links */}
                     <div className="hidden md:flex gap-8 items-center">
                         <Link
                             to="/"
-                            className={`text-sm transition-colors pb-1 border-b-2 cursor-pointer ${location.pathname === "/" ? (scrolled ? "text-secondary border-secondary" : "text-white border-white") : "text-black/55 hover:text-primary border-transparent"}`}
+                            className={`text-sm transition-colors pb-1 border-b-2 cursor-pointer ${location.pathname === "/" ? (scrolled ? "text-[#c9a96e] border-[#c9a96e]" : "text-white border-white") : "text-black/55 hover:text-[#c9a96e] border-transparent"}`}
                         >
                             Discover
                         </Link>
                         <Link
                             to="/search"
-                            className={`text-sm transition-colors pb-1 border-b-2 border-transparent cursor-pointer ${location.pathname.startsWith("/search") ? "text-secondary border-secondary" : scrolled || location.pathname !== "/" ? "text-black/55 hover:text-primary" : "text-white/80 hover:text-white"}}`}
+                            className={`text-sm transition-colors pb-1 border-b-2 border-transparent cursor-pointer ${location.pathname.startsWith("/search") ? "text-[#c9a96e] border-[#c9a96e]" : scrolled || location.pathname !== "/" ? "text-black/55 hover:text-[#c9a96e]" : "text-white/80 hover:text-white"}}`}
                         >
                             Restaurants
                         </Link>
                         <button
                             onClick={handleDashboardClick}
-                            className={`text-sm transition-colors pb-1 border-b-2 border-transparent cursor-pointer text-left ${location.pathname === "/dashboard" ? "text-secondary border-secondary" : scrolled || location.pathname !== "/" ? "text-black/55 hover:text-primary" : "text-white/80 hover:text-white"}`}
+                            className={`text-sm transition-colors pb-1 border-b-2 border-transparent cursor-pointer text-left ${location.pathname === "/dashboard" ? "text-[#c9a96e] border-[#c9a96e]" : scrolled || location.pathname !== "/" ? "text-black/55 hover:text-[#c9a96e]" : "text-white/80 hover:text-white"}`}
                         >
                             My Bookings
                         </button>
@@ -79,9 +80,9 @@ export default function Navbar() {
                                 className={`flex items-center gap-2 text-sm transition-colors cursor-pointer ${scrolled || location.pathname !== "/" ? "text-secondary" : "text-white"}`}
                             >
                                 <span className="size-7 rounded-full bg-secondary/20 border flex items-center justify-center text-xs uppercase">
-                                    {user.name.charAt(0)}
+                                    {user?.name?.charAt(0) ?? '?'}
                                 </span>
-                                <span className="max-w-[120px] truncate">{user.name.split(" ")[0]}</span>
+                                <span className="max-w-30 truncate">{user?.name?.split(' ')[0] ?? 'Guest'}</span>
                             </button>
 
                             {/* Dropdown Menu */}
@@ -132,13 +133,13 @@ export default function Navbar() {
                         <>
                             <button
                                 onClick={() => setAuthModalOpen(true)}
-                                className={`text-sm transition-colors cursor-pointer ${scrolled || location.pathname !== "/" ? "text-black/55 hover:text-primary" : "text-white/80 hover:text-white"}`}
+                                className={`text-sm transition-colors cursor-pointer ${scrolled || location.pathname !== "/" ? "text-black/55 hover:text-[#c9a96e]" : "text-white/80 hover:text-white"}`}
                             >
                                 Sign In
                             </button>
                             <button
                                 onClick={() => setAuthModalOpen(true)}
-                                className={`text-xs font-medium tracking-wider uppercase px-5 py-2.5 transition-soft cursor-pointer ${scrolled || location.pathname !== "/" ? "bg-primary text-white hover:bg-primary-container hover:text-secondary" : "bg-white text-primary hover:bg-secondary hover:text-white"}`}
+                                className={`text-xs font-medium tracking-wider uppercase px-5 py-2.5 transition-soft cursor-pointer ${scrolled || location.pathname !== "/" ? "bg-[#c9a96e] text-white hover:bg-primary-black hover:text-secondary" : "bg-white text-primary hover:bg-[#c9a96e] hover:text-white"}`}
                             >
                                 Sign Up
                             </button>

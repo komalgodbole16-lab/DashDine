@@ -10,11 +10,11 @@ interface TrendingRowProps {
 
 export default function TrendingRow({ trending, loading }: TrendingRowProps) {
     return (
-        <section className="py-24 bg-surface-container-low/50">
-            <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <section className="py-24 bg-[#c9b088]">
+            <div className="max-w-8xl mx-auto px-6 md:px-10">
                 <div className="flex justify-between items-end mb-12">
                     <div>
-                        <span className="text-[10px] text-secondary tracking-[0.2em] block mb-2 uppercase">
+                        <span className="text-[15px] text-secondary tracking-[0.2em] block mb-2 uppercase">
                             CURRENTLY TRENDING
                         </span>
                         <h2 className="font-display text-2xl md:text-3xl font-semibold text-primary">Trending Fine Dining</h2>
