@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getFeaturedRestaurants, getRestaurantAvailability, getRestaurants, getRestaurantsBySlug } from "../controllers/restaurant.Controller.js";
+import { getFeaturedRestaurants, getRestaurantAvailability, getRestaurants, getRestaurantsBySlug } from "../controllers/restaurantController.js";
 
 const restaurantRouter = Router();
 

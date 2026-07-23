@@ -6,7 +6,8 @@ import Footer from "../components/Footer.tsx";
 import RestaurantCard from "../components/RestaurantCard.tsx";
 import AuthModal from "../components/AuthModal.tsx";
 import { SlidersHorizontal, Search as SearchIcon, X, Check, MapPin, SearchXIcon } from "lucide-react";
-import { dummyRestaurant } from "../assets/assets.ts";
+import api from "../lib/api.ts";
+import toast from "react-hot-toast";
 
 export default function Search() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -37,8 +38,16 @@ export default function Search() {
 
     useEffect(() => {
         const fetchRestaurants = async () => {
-            setRestaurants(dummyRestaurant);
-            setLoading(false);
+            try {
+                setLoading(true)
+                // Construct query string disrectly from searchParams
+                const res = await api.get(`/restaurants?${searchParams.toString()}`)
+                setRestaurants(res.data)
+            } catch (error:any) {
+                toast.error(error?.response?.data?.message || error?.message);
+            }finally{
+                setLoading(false)
+            }
         };
 
         fetchRestaurants();
@@ -102,7 +111,7 @@ export default function Search() {
         setTempLocation("");
     };
 
-    const priceOptions = ["$", "$$", "$$$", "$$$$"];
+    const priceOptions = ["₹", "₹₹", "₹₹₹", "₹₹₹₹"];
     const cuisineOptions = ["Italian", "French", "Japanese", "Steakhouse", "Vegetarian"];
 
     return (
@@ -111,10 +120,10 @@ export default function Search() {
             <AuthModal />
 
             {/* Sub-header / Search inputs */}
-            <div className="bg-white border-b border-outline-variant/10 py-4 z-10 sticky top-16 shadow-sm">
+            <div className="bg-[#c9b088] border-b border-outline-variant/10 py-4 z-10 sticky top-16 shadow-sm">
                 <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-col md:flex-row gap-4 items-center justify-between">
                     <form onSubmit={handleTextSubmit} className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                        <div className="relative grow sm:grow-0 min-w-[200px]">
+                        <div className="relative grow sm:grow-0 min-w-50">
                             <SearchIcon size={16} className="absolute left-2.5 top-2 text-black/55/70" />
                             <input
                                 type="text"
@@ -124,7 +133,7 @@ export default function Search() {
                                 className="w-full pl-9 pr-3 py-2 text-xs border border-outline-variant/40 rounded-md focus:border-secondary focus:outline-none bg-surface-container-low/30"
                             />
                         </div>
-                        <div className="relative grow sm:grow-0 min-w-[200px]">
+                        <div className="relative grow sm:grow-0 min-w-50">
                             <MapPin size={16} className="absolute left-2.5 top-2 text-black/55/70" />
                             <input
                                 type="text"
@@ -142,7 +151,7 @@ export default function Search() {
                         </button>
                     </form>
 
-                    <div className="flex gap-3 w-full md:w-auto justify-end">
+                    <div className="flex gap-3 w-full md:w-auto justify-end ">
                         <button
                             onClick={() => setShowMobileFilters(true)}
                             className="md:hidden flex items-center gap-1.5 border border-outline-variant/50 hover:border-primary text-xs font-medium px-4 py-2 bg-white cursor-pointer transition-colors"
@@ -154,7 +163,7 @@ export default function Search() {
                 </div>
             </div>
 
-            <main className="grow max-w-7xl w-full mx-auto px-6 md:px-10 py-10 flex gap-10">
+            <main className="grow max-auto w-full mx-auto px-6 md:px-10 py-10 flex gap-10 bg-[#d4c0a0]">
                 {/* Desktop Sidebar Filters */}
                 <aside className="hidden md:block w-64 shrink-0">
                     <div className="sticky top-44 space-y-8">

@@ -20,20 +20,21 @@ export const getRestaurants = async (req: Request, res: Response): Promise<void>
                 {name: { $regex: search, $options: "i"}},
                 {tags: { $regex: search, $options: "i"}},
                 {location: { $regex: search, $options: "i"}},
-            ]
+            ];
          }
 
-         if(priceRange){
-            const prices = Array.isArray(priceRange) ? priceRange : [priceRange];
-            queryObj.priceRange = {$in: prices};
-         }
 
-          if(rating){
+        if(rating){
             queryObj.rating = {$gte: parseFloat(rating as string)};
          }
 
-         if(location){
-            queryObj.rating = {$regex: location as string, $options: "i"};
+        if(location){
+            queryObj.location = {$regex: location as string, $options: "i"};
+         }
+
+        if(priceRange){
+            const prices = Array.isArray(priceRange) ? priceRange : [priceRange];
+            queryObj.priceRange = {$in: prices};
          }
 
          // Sorting
@@ -45,7 +46,8 @@ export const getRestaurants = async (req: Request, res: Response): Promise<void>
         }else if(sort === "price_high"){
             sortOption = {priceRange: -1};
         }    
-
+        
+        console.log("QUERY:", JSON.stringify(queryObj));
         const restaurant = await Restaurant.find(queryObj).sort(sortOption);
         res.json(restaurant)
 
@@ -60,12 +62,13 @@ export const getRestaurants = async (req: Request, res: Response): Promise<void>
 export const getFeaturedRestaurants = async (req: Request, res: Response): Promise<void> => {
     try {
         const featured = await Restaurant.find({
+            status: "approved",
             $or: [{featured: true}, {exclusive: true}]
         }).limit(6)
         res.json(featured);
-    } catch (error: any) {
-        console.error(error);
-        res.status(400).json({message: error.message})
+    } catch (error) {
+        console.error("Get Featured Restaurants Error", error);
+        res.status(500).json({message: "Server error"})
     }
 }
 
