@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Utensils, Upload, Image } from "lucide-react";
 import toast from "react-hot-toast";
-import { dummyRestaurant } from "../../assets/assets.ts";
+import api from "../../lib/api.ts";
 
 interface RestaurantWizardProps {
     setRestaurant: (restaurant: any) => void;
@@ -12,7 +12,7 @@ export default function RestaurantWizard({ setRestaurant }: RestaurantWizardProp
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [cuisine, setCuisine] = useState("");
-    const [priceRange, setPriceRange] = useState("$$");
+    const [priceRange, setPriceRange] = useState("₹₹");
     const [location, setLocation] = useState("");
     const [address, setAddress] = useState("");
     const [chef, setChef] = useState("");
@@ -85,7 +85,13 @@ export default function RestaurantWizard({ setRestaurant }: RestaurantWizardProp
                 formData.append("image", imageFile);
             }
 
-            setRestaurant(dummyRestaurant[0]);
+            const res = await api.post("/owner/restaurant", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            setRestaurant(res.data)
+
             toast.success("Restaurant profile submitted successfully! Awaiting Admin approval.");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Failed to register restaurant");
@@ -175,10 +181,10 @@ export default function RestaurantWizard({ setRestaurant }: RestaurantWizardProp
                             onChange={(e) => setPriceRange(e.target.value)}
                             className="w-full bg-surface-container-low/30 border border-outline-variant/40 px-3 py-2.5 text-xs focus:border-secondary focus:outline-none rounded-sm"
                         >
-                            <option value="$">$ (Casual)</option>
-                            <option value="$$">$$ (Moderate)</option>
-                            <option value="$$$">$$$ (Upscale)</option>
-                            <option value="$$$$">$$$$ (Fine Dining)</option>
+                            <option value="₹">₹ (Casual)</option>
+                            <option value="₹₹">₹₹ (Moderate)</option>
+                            <option value="₹₹₹">₹₹₹ (Upscale)</option>
+                            <option value="₹₹₹₹">₹₹₹₹ (Fine Dining)</option>
                         </select>
                     </div>
                     <div className="space-y-1">

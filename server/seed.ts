@@ -11,6 +11,10 @@ const seedData = async ()=>{
     try {
         console.log("Connecting to database for seeding...");
 
+        console.log("URI being used:", MONGO_URI);
+
+        console.log("Connected to DB:", mongoose.connection.name);
+
         await mongoose.connect(MONGO_URI)
 
         console.log("Database connected. Clearing existing collections...");
@@ -30,7 +34,7 @@ const seedData = async ()=>{
         const adminUser = await User.create({
             name: "Alex Mercer",
             email: "admin@example.com",
-            password: "adminPassword",
+            password: adminPassword,
             phone: "+0123456789",
             role: "admin",
         })
@@ -39,7 +43,7 @@ const seedData = async ()=>{
         const testUser = await User.create({
             name: "Sarah Jenkins",
             email: "user@example.com",
-            password: "userPassword",
+            password: userPassword,
             phone: "+0123456789",
             role: "user",
         })
@@ -48,7 +52,7 @@ const seedData = async ()=>{
         const ownerUser = await User.create({
             name: "Marc Dubois",
             email: "owner@example.com",
-            password: "ownerPassword", 
+            password: ownerPassword, 
             phone: "+0123456789",
             role: "owner"
         });

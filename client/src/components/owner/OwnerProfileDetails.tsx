@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Upload, Image } from "lucide-react";
-import { dummyRestaurant } from "../../assets/assets.ts";
+import api from "../../lib/api.ts";
 
 interface OwnerProfileDetailsProps {
     restaurant: any;
@@ -13,7 +13,7 @@ export default function OwnerProfileDetails({ restaurant, setRestaurant }: Owner
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [cuisine, setCuisine] = useState("");
-    const [priceRange, setPriceRange] = useState("$$");
+    const [priceRange, setPriceRange] = useState("₹₹");
     const [location, setLocation] = useState("");
     const [address, setAddress] = useState("");
     const [chef, setChef] = useState("");
@@ -46,7 +46,7 @@ export default function OwnerProfileDetails({ restaurant, setRestaurant }: Owner
                 setName(restaurant.name || "");
                 setDescription(restaurant.description || "");
                 setCuisine(restaurant.cuisine || "");
-                setPriceRange(restaurant.priceRange || "$$");
+                setPriceRange(restaurant.priceRange || "₹₹");
                 setLocation(restaurant.location || "");
                 setAddress(restaurant.address || "");
                 setChef(restaurant.chef || "");
@@ -93,7 +93,14 @@ export default function OwnerProfileDetails({ restaurant, setRestaurant }: Owner
             if (imageFile) {
                 formData.append("image", imageFile);
             }
-            setRestaurant(dummyRestaurant[0]);
+            
+            const res = await api.put("/owner/restaurant", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            setRestaurant(res.data)
+
             toast.success("Profile details updated successfully!");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || "Update failed");
@@ -176,10 +183,10 @@ export default function OwnerProfileDetails({ restaurant, setRestaurant }: Owner
                             onChange={(e) => setPriceRange(e.target.value)}
                             className="w-full bg-surface-container-low/30 border border-outline-variant/40 px-3 py-2.5 text-xs focus:border-secondary focus:outline-none rounded-sm"
                         >
-                            <option value="$">$ (Casual)</option>
-                            <option value="$$">$$ (Moderate)</option>
-                            <option value="$$$">$$$ (Upscale)</option>
-                            <option value="$$$$">$$$$ (Fine Dining)</option>
+                            <option value="₹">₹ (Casual)</option>
+                            <option value="₹₹">₹₹ (Moderate)</option>
+                            <option value="₹₹₹">₹₹₹ (Upscale)</option>
+                            <option value="₹₹₹₹">₹₹₹₹ (Fine Dining)</option>
                         </select>
                     </div>
                     <div className="space-y-1">

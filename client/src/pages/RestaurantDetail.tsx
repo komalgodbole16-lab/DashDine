@@ -35,9 +35,6 @@ export default function RestaurantDetail() {
                 const res = await api.get(`/restaurants/${slug}`)
                 setRestaurant(res.data)
 
-                // Initialize booking values
-                const today = new Date().toString().split("T")[0];
-                setSelectedDate(today);
             } catch (error: any) {
                 toast.error(error?.response?.data?.message || error?.message);
                 navigate("/");
@@ -74,10 +71,17 @@ export default function RestaurantDetail() {
     if (!restaurant) return null;
 
     const handleReserveClick = () => {
+
+        if (!selectedDate) {
+            toast.error("Please select Date.");
+            return;
+        }
+
         if (!selectedSlot) {
             toast.error("Please select a dining time slot.");
             return;
         }
+
 
         if (!isAuthenticated) {
             setAuthModalOpen(true);

@@ -32,7 +32,7 @@ export default function BookingSummary({ restaurant, date, slot, guests }: Booki
 
             {/* Date/Time/Guests lists */}
             <div className="border-t border-b border-outline-variant/10 py-5 space-y-3 text-xs text-on-surface">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center ">
                     <span className="text-black/55 flex items-center gap-2">
                         <Calendar size={14} /> Date
                     </span>

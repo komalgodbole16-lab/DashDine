@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getFeaturedRestaurants, getRestaurantAvailability, getRestaurants, getRestaurantsBySlug } from "../controllers/restaurantController.js";
 
+
 const restaurantRouter = Router();
 
 restaurantRouter.get('/', getRestaurants);
