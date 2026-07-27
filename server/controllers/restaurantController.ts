@@ -6,10 +6,12 @@ import { Booking } from "../models/Booking.js";
 import { time } from "node:console";
 
 
+
 // Get all restaurant with search and filters
 // Ger /api/restaurants
 export const getRestaurants = async (req: Request, res: Response): Promise<void> => {
     try {
+        console.log("FUNCTION CALLED");
         const {search, priceRange, rating, location, sort} = req.query;
 
         //Build query object
@@ -29,6 +31,8 @@ export const getRestaurants = async (req: Request, res: Response): Promise<void>
          }
 
         if(location){
+            console.log("typeof location:", typeof location, location);
+            console.log("Full queryObj:", queryObj);
             queryObj.location = {$regex: location as string, $options: "i"};
          }
 
@@ -38,7 +42,7 @@ export const getRestaurants = async (req: Request, res: Response): Promise<void>
          }
 
          // Sorting
-         let sortOption: any = {cretaeAt: -1}
+         let sortOption: any = {createAt: -1}
         if(sort === "rating"){
             sortOption = {rating: -1}
         }else if(sort === "price_low"){

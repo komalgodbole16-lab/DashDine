@@ -1,4 +1,5 @@
 import {Document, model, Schema, Types} from 'mongoose'
+import { Restaurant } from './restaurant.js';
 import crypto from "crypto";
 
 export interface IBooking extends Document{
@@ -18,7 +19,7 @@ export interface IBooking extends Document{
 const BookingSchema = new Schema<IBooking>(
     {
     user: {type : Schema.Types.ObjectId, ref: "User", required: true },
-    restaurant: {type : Schema.Types.ObjectId, ref: "restaurant", required: true },
+    restaurant: {type : Schema.Types.ObjectId, ref: "Restaurant", required: true },
     date: {type : Date, required: true },
     time: {type : String, required: true },
     guests: {type : Number, required: true, min: 1 },

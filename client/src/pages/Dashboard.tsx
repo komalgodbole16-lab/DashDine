@@ -8,7 +8,7 @@ import RestaurantCard from "../components/RestaurantCard.tsx";
 import AuthModal from "../components/AuthModal.tsx";
 import { CalendarIcon, UsersIcon, ClockIcon, MapPinIcon, CalendarDaysIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { dummyFeaturedRestaurants, dummyMyBookingsData } from "../assets/assets.ts";
+import api from "../lib/api.ts";
 
 export default function Dashboard() {
     const { user } = useAppContext();
@@ -20,8 +20,15 @@ export default function Dashboard() {
     // Fetch user bookings
     useEffect(() => {
         const fetchBookings = async () => {
-            setBookings(dummyMyBookingsData);
-            setLoadingBookings(false);
+            try {
+                setLoadingBookings(true);
+                const res = await api.get("/bookings/my")
+                setBookings(res.data)
+            } catch (error: any) {
+                toast.error(error?.response?.data?.message || error?.message);
+            }finally{
+                setLoadingBookings(false);
+            }
         };
 
         if (user) {
@@ -32,7 +39,12 @@ export default function Dashboard() {
     // Fetch generic recommendations
     useEffect(() => {
         const fetchRecommendations = async () => {
-            setRecommendations(dummyFeaturedRestaurants);
+            try {
+                const res = await api.get("/restaurants/featured")
+                setRecommendations(res.data)
+            } catch (error: any) {
+                toast.error(error?.response?.data?.message || error?.message);
+            }
         };
         fetchRecommendations();
     }, []);
@@ -43,7 +55,9 @@ export default function Dashboard() {
         }
 
         try {
-            setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: "cancelled" } : b)));
+            await api.put(`/bookings/${bookingId}/cancel`)
+            // Update local state
+            setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: "cancelled" } : b)))
             toast.success("Reservation cancelled successfully.");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || error?.message);
@@ -71,28 +85,28 @@ export default function Dashboard() {
             <Navbar />
             <AuthModal />
 
-            <main className="grow max-w-7xl w-full mx-auto px-6 md:px-10 py-12">
+            <main className="grow  w-full mx-auto px-6 md:px-10 py-12 bg-[#E3CFAB]">
                 {/* Main Content Area */}
                 <div className="grow space-y-10">
                     {/* Welcoming header */}
                     <div className="pb-4 border-b border-outline-variant/10">
-                        <h2 className="font-display text-2xl md:text-3xl font-semibold text-primary">
+                        <h2 className=" font-display text-2xl md:text-3xl font-semibold text-primary">
                             Welcome back, {user.name.split(" ")[0]}
                         </h2>
                         <p className="text-xs text-black/55 mt-1.5">Manage your upcoming dining experiences.</p>
                     </div>
 
-                    <div className="space-y-10">
+                    <div className="space-y-10 ">
                         {/* Upcoming Reservations */}
                         <div className="space-y-4">
                             <h3 className="font-display text-lg font-medium text-primary">Upcoming Bookings</h3>
 
                             {loadingBookings ? (
-                                <div className="bg-white border border-outline-variant/10 p-12 text-center flex justify-center">
+                                <div className="bg-[#c9b088] border-outline-variant/10 p-12 text-center flex justify-center">
                                     <div className="w-6 h-6 border-2 border-outline-variant/30 border-t-secondary rounded-full animate-spin"></div>
                                 </div>
                             ) : upcomingBookings.length === 0 ? (
-                                <div className="bg-white border border-outline-variant/10 p-12 text-center rounded-md">
+                                <div className="bg-[#c9b088] border-outline-variant/10 p-12 text-center rounded-md">
                                     <CalendarDaysIcon size={36} className="mx-auto text-outline-variant mb-2" />
 
                                     <p className="text-xs text-black/55 italic">No upcoming reservations scheduled.</p>

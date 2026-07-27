@@ -7,8 +7,8 @@ const adminRouter = Router()
 adminRouter.use(protect)
 adminRouter.use(adminOnly)
 
-adminRouter.get("/restaurant",getAllRestaurants)
-adminRouter.put("/restaurant/:id/approve",approveRestaurant)
+adminRouter.get("/restaurants",getAllRestaurants)
+adminRouter.put("/restaurants/:id/approve",approveRestaurant)
 adminRouter.get("/stats",getAdminStats)
 
 export default adminRouter

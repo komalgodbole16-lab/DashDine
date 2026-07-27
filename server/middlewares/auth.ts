@@ -19,7 +19,7 @@ Promise<void> => {
             const decoded = Jwt.verify(token, process.env.JWT_SECRET!) as {id: string};
 
             //Get user from the token, ecxlude password
-            const user = await User.findById(decoded.id).select("password");
+            const user = await User.findById(decoded.id).select("-password");
             if(!user){
                 res.status(401).json({message: "Not authorised, user not found"});
                 return;

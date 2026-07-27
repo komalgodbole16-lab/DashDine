@@ -96,10 +96,14 @@ export const cancelBookings = async (req: AuthRequest, res: Response): Promise<v
   if(!booking){
     res.status(404).json({message: "Booking not found"});
     return;
-    }
+    } 
+
 
   //verify user owns the booking
-  if(booking.user.toString() ! == req.user?._id.toString()){
+  if(booking.user.toString() !== req.user?._id.toString()){
+    console.log("!!! ENTERED 401 BLOCK !!!");
+    console.log("Booking user was:", booking.user.toString());
+    console.log("Req user was:", req.user?._id.toString());
     res.status(401).json({message: "Not authorized to cancel this booking"});
     return;
   }
