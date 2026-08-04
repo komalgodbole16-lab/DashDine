@@ -17,6 +17,11 @@ await connectDB()
 app.use(cors())
 app.use(express.json());
 
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
 const port = process.env.PORT || 5000;
 
 app.get('/', (req: Request, res: Response) => {
