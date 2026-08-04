@@ -27,6 +27,9 @@ const port = process.env.PORT || 5000;
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is Live!');
 });
+app.get('/test-restaurants', (req:Request, res:Response) => {
+    res.json({message: "test route working"});
+});
 
 app.use("/api/auth", authRouter)
 app.use("/api/restaurants", restaurantRouter)
