@@ -11,56 +11,62 @@ import { time } from "node:console";
 // Ger /api/restaurants
 export const getRestaurants = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log("FUNCTION CALLED");
-        const {search, priceRange, rating, location, sort} = req.query;
+         console.log("🔥 NEW CODE RUNNING - VERSION 2");
+        const { search, priceRange, rating, location, sort, cuisine } = req.query;
 
-        //Build query object
-         const queryObj:any = {status: "approved"};
+        const queryObj: any = { status: "approved" };
 
-         if(search){
+        if (search) {
             queryObj.$or = [
-                {name: { $regex: search, $options: "i"}},
-                {tags: { $regex: search, $options: "i"}},
-                {location: { $regex: search, $options: "i"}},
+                { name: { $regex: search, $options: "i" } },
+                { tags: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
             ];
-         }
+        }
 
+        if (rating) {
+            queryObj.rating = { $gte: parseFloat(rating as string) };
+        }
 
-        if(rating){
-            queryObj.rating = {$gte: parseFloat(rating as string)};
-         }
+        if (location) {
+            queryObj.location = { $regex: location as string, $options: "i" };
+        }
 
-        if(location){
-            console.log("typeof location:", typeof location, location);
-            console.log("Full queryObj:", queryObj);
-            queryObj.location = {$regex: location as string, $options: "i"};
-         }
-
-        if(priceRange){
+        if (priceRange) {
             const prices = Array.isArray(priceRange) ? priceRange : [priceRange];
-            queryObj.priceRange = {$in: prices};
-         }
+            queryObj.priceRange = { $in: prices };
+        }
 
-         // Sorting
-         let sortOption: any = {createAt: -1}
-        if(sort === "rating"){
-            sortOption = {rating: -1}
-        }else if(sort === "price_low"){
-            sortOption = {priceRange: 1};
-        }else if(sort === "price_high"){
-            sortOption = {priceRange: -1};
-        }    
-        
-        console.log("QUERY:", JSON.stringify(queryObj));
+        if (cuisine) {
+            const cuisines = Array.isArray(cuisine) ? cuisine : [cuisine];
+            const escaped = cuisines.map((c) =>
+                String(c).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+            );
+            queryObj.cuisine = {
+                $regex: escaped.join("|"),
+                $options: "i",
+            };
+        }
+
+        let sortOption: any = { createdAt: -1 };
+        if (sort === "rating") {
+            sortOption = { rating: -1 };
+        } else if (sort === "price_low") {
+            sortOption = { priceRange: 1 };
+        } else if (sort === "price_high") {
+            sortOption = { priceRange: -1 };
+        }
+
+        console.log("FILTER QUERY:", JSON.stringify(queryObj));
         const restaurant = await Restaurant.find(queryObj).sort(sortOption);
-        res.json(restaurant)
+        res.set("Cache-Control", "no-store");
+        res.json(restaurant);
 
     } catch (error: any) {
         console.error(error);
-        res.status(400).json({message: error.message})
+        res.status(400).json({ message: error.message });
     }
 }
-
 // Get featured and exclusive restaurants
 // Ger /api/restaurants/featured
 export const getFeaturedRestaurants = async (req: Request, res: Response): Promise<void> => {
@@ -153,5 +159,24 @@ export const getRestaurantAvailability= async (req: Request, res: Response): Pro
     } catch (error: any) {
         console.error(error);
         res.status(400).json({message: error.message})
+    }
+}
+
+// Get all unique cuisine/tags for filter list
+// GET /api/restaurants/cuisines
+export const getRestaurantTags = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const cuisineStrings = await Restaurant.distinct("cuisine", { status: "approved" });
+        // "Maharashtrian, North Indian" jaisi strings ko split karke individual cuisines nikalo
+        const allCuisines = cuisineStrings
+            .flatMap((c: string) => c.split(","))
+            .map((c: string) => c.trim())
+            .filter((c: string) => c.length > 0);
+
+        const uniqueCuisines = [...new Set(allCuisines)].sort();
+        res.json(uniqueCuisines);
+    } catch (error: any) {
+        console.error(error);
+        res.status(400).json({ message: error.message });
     }
 }

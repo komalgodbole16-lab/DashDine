@@ -10,6 +10,7 @@ import Loader from "../components/Loader.tsx";
 import BookingSuccess from "../components/booking/BookingSuccess.tsx";
 import BookingSummary from "../components/booking/BookingSummary.tsx";
 import BookingForm from "../components/booking/BookingForm.tsx";
+import { calculateAdvanceAmount } from "../components/booking/AdvancePaymentModal.tsx";
 import api from "../lib/api.ts";
 
 export default function BookingConfirmation() {
@@ -81,9 +82,19 @@ export default function BookingConfirmation() {
 
         try {
             setConfirming(true);
-        
-         const res = await api.post(`/bookings`, {restaurantId: restaurant._id, date, time: slot, guests, occasion, specialRequests})
-         setConfirmedBooking(res.data)
+
+            const advanceAmount = calculateAdvanceAmount(occasion, specialRequests);
+            const res = await api.post(`/bookings`, {
+                restaurantId: restaurant._id,
+                date,
+                time: slot,
+                guests,
+                occasion,
+                specialRequests,
+                advanceAmount,
+                paymentStatus: "paid",
+            })
+            setConfirmedBooking(res.data)
 
             toast.success("Reservation confirmed!");
         } catch (error: any) {
@@ -142,6 +153,7 @@ export default function BookingConfirmation() {
                             setSpecialRequests={setSpecialRequests}
                             confirming={confirming}
                             onSubmit={handleConfirmSubmit}
+                            restaurantName={restaurant.name}
                         />
                     </div>
                 </div>

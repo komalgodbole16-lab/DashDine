@@ -22,7 +22,7 @@ export const assets = {
 export const dummyReviews = [
     {
         _id: "dummy-rev-1",
-        userName: "Emily Watson",
+        userName: "Priya Sharma",
         rating: 5,
         comment: "Absolutely phenomenal experience! The ambiance was perfect, and the food was cooked to perfection. A must-visit!",
         visitedDate: "2026-06-10T12:00:00.000Z",
@@ -30,7 +30,7 @@ export const dummyReviews = [
     },
     {
         _id: "dummy-rev-2",
-        userName: "Marcus Vance",
+        userName: "Amit Gupta",
         rating: 4,
         comment:
             "The signature dishes were incredible and the staff was extremely attentive. Will definitely come back for another dinner.",
@@ -39,7 +39,7 @@ export const dummyReviews = [
     },
     {
         _id: "dummy-rev-3",
-        userName: "Sophia Loren",
+        userName: "Dev Rastogi",
         rating: 5,
         comment: "Every course of the tasting menu was a delightful surprise. The pairings were exquisite. High-end dining at its finest.",
         visitedDate: "2026-06-05T20:15:00.000Z",
@@ -103,24 +103,24 @@ export const dummyUser = {
 export const dummyRestaurant = [ ];
 
 export const dummyAvailability = [
-    { time: "18:00", availableSeats: 45, isAvailable: true },
-    { time: "19:00", availableSeats: 45, isAvailable: true },
-    { time: "20:00", availableSeats: 45, isAvailable: true },
-    { time: "21:00", availableSeats: 45, isAvailable: true },
-    { time: "22:00", availableSeats: 45, isAvailable: true },
+    { time: "6:00 am", availableSeats: 45, isAvailable: true },
+    { time: "7:00 pm", availableSeats: 45, isAvailable: true },
+    { time: "8:00 pm", availableSeats: 45, isAvailable: true },
+    { time: "9:00 pm", availableSeats: 45, isAvailable: true },
+    { time: "10:00 pm", availableSeats: 45, isAvailable: true },
 ];
 
 export const dummyBookingData = {
     user: "6a32a3c50e88c825d8873f75",
     restaurant: {
         _id: "6a32a3c50e88c825d8873f7d",
-        name: "L'Essence",
+        name: "Relax Restaurant",
         location: "Manhattan, NY",
         address: "115 Greenwich St, New York, NY 10006",
         image: "/restaurant_5.png",
     },
     date: "2026-06-25T00:00:00.000Z",
-    time: "22:00",
+    time: "2:00",
     guests: 2,
     occasion: "",
     specialRequests: "",
@@ -137,14 +137,14 @@ export const dummyMyBookingsData = [
         user: "6a32a3c50e88c825d8873f75",
         restaurant: {
             _id: "6a32a3c50e88c825d8873f7d",
-            name: "L'Essence",
-            slug: "l-essence",
+            name: "Relax Restaurant",
+            slug: "Relax Restaurant",
             location: "Manhattan, NY",
             address: "115 Greenwich St, New York, NY 10006",
             image: "/restaurant_5.png",
         },
         date: "2026-06-25T00:00:00.000Z",
-        time: "22:00",
+        time: "2:00 pm",
         guests: 2,
         occasion: "",
         specialRequests: "",
@@ -165,7 +165,7 @@ export const dummyMyBookingsData = [
             image: "/restaurant_3.jpg",
         },
         date: "2026-06-19T00:00:00.000Z",
-        time: "20:00",
+        time: "2:00 pm",
         guests: 2,
         occasion: "",
         specialRequests: "",
@@ -186,7 +186,7 @@ export const dummyMyBookingsData = [
             image: "/restaurant_4.png",
         },
         date: "2026-06-19T00:00:00.000Z",
-        time: "19:00",
+        time: "9:00 pm",
         guests: 2,
         occasion: "",
         specialRequests: "",
@@ -207,7 +207,7 @@ export const dummyAdminStats = {
             user: { _id: "6a34ef24a4d96fc34d9c906b", name: "Marc Dubois", email: "owner@example.com" },
             restaurant: { _id: "6a34ef24a4d96fc34d9c906d", name: "Kuro Omakase" },
             date: "2026-06-19T00:00:00.000Z",
-            time: "20:30",
+            time: "2:30 pm",
             guests: 2,
             occasion: "",
             specialRequests: "",

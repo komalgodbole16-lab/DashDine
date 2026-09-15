@@ -47,7 +47,15 @@ export const adminOnly = (req: AuthRequest, res: Response, next: NextFunction): 
     }
 }
 
+// export const ownerOnly = (req: AuthRequest, res: Response, next: NextFunction): void=>{
+//     if(req.user && (req.user.role === "owner" || req.user.role === "admin")){
+//         next()
+//     }else{
+//         res.status(403).json({message: "Access denied, restaurant owner role required"});
+//     }
+// }
 export const ownerOnly = (req: AuthRequest, res: Response, next: NextFunction): void=>{
+    console.log("Checking role for user:", req.user?.email, req.user?.role);   // <-- ye line add kar
     if(req.user && (req.user.role === "owner" || req.user.role === "admin")){
         next()
     }else{

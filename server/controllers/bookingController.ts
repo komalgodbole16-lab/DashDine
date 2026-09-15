@@ -10,10 +10,16 @@ import { Booking } from "../models/Booking.js";
 export const createBooking = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         
-   const {restaurantId, date, time, guests, occasion, specialRequest} = req.body;
+   const {restaurantId, date, time, guests, occasion, specialRequest, advanceAmount} = req.body;
 
    if(!restaurantId || !date || !time ||!guests){
     res.status(400).json({message: "Please provide all required reservation details"});
+    return;
+   }
+
+   const expectedAmount = (occasion && occasion !== "None") || (specialRequest && specialRequest.trim().length > 0) ? 500 : 300;
+   if (Number(advanceAmount) !== expectedAmount) {
+    res.status(400).json({message: `Advance amount should be ₹${expectedAmount}`});
     return;
    }
 
@@ -33,11 +39,11 @@ export const createBooking = async (req: AuthRequest, res: Response): Promise<vo
    // Verify seat availibility
    const requestedGuests = Number(guests);
 
-   const existingBookings = await Booking.find({
+    const existingBookings = await Booking.find({
     restaurant: restaurantId,
     date: new Date(date),
     time,
-    status: "confirmed",
+    status: { $in: ["confirmed", "pending"] },
    })
    const bookedSeats = existingBookings.reduce((sum, b)=>sum + b.guests, 0)
 
@@ -50,7 +56,7 @@ export const createBooking = async (req: AuthRequest, res: Response): Promise<vo
     })
    }
 
-   const booking = await Booking.create({
+    const booking = await Booking.create({
     user: req.user?._id,
     restaurant: restaurantId,
     date: new Date(date),
@@ -58,7 +64,9 @@ export const createBooking = async (req: AuthRequest, res: Response): Promise<vo
     guests: Number(guests),
     occasion,
     specialRequest,
-    status: "confirmed",
+    status: "pending",
+    advanceAmount: expectedAmount,   
+    paymentStatus: req.body.paymentStatus === "paid" ? "paid" : "pending",  
    })
 
    //Populate restaurant info before returning
@@ -117,5 +125,36 @@ export const cancelBookings = async (req: AuthRequest, res: Response): Promise<v
     } catch (error: any) {
         console.error(error);
         res.status(400).json({message: error.message});
+    }
+}
+
+// Confirm advance payment for a booking
+// PUT /api/bookings/:id/confirm-payment
+// @access Private
+export const confirmPayment = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
+
+        // verify user owns the booking
+        if (booking.user.toString() !== req.user?._id.toString()) {
+            res.status(401).json({ message: "Not authorized" });
+            return;
+        }
+
+        booking.paymentStatus = "paid";
+        booking.status = "confirmed";
+        await booking.save();
+
+        const populatedBooking = await booking.populate("restaurant", "name location image address");
+        res.json(populatedBooking);
+
+    } catch (error: any) {
+        console.error(error);
+        res.status(400).json({ message: error.message });
     }
 }

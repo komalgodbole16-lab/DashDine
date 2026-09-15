@@ -53,6 +53,8 @@ export default function Search() {
         fetchRestaurants();
     }, [searchParams]);
 
+  
+
     const handleTextSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const nextParams = new URLSearchParams(searchParams);
@@ -112,7 +114,7 @@ export default function Search() {
     };
 
     const priceOptions = ["₹", "₹₹", "₹₹₹", "₹₹₹₹"];
-    const cuisineOptions = ["Italian", "French", "Japanese", "Steakhouse", "Vegetarian"];
+    const cuisineOptions = ["North Indian", "South Indian", "Maharashtrian", "Continental", "Hyderabadi", "Multi-Cuisine"];
 
     return (
         <div className="min-h-screen bg-surface flex flex-col pt-20">

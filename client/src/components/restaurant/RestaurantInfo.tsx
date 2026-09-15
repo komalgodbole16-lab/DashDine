@@ -25,7 +25,7 @@ export default function RestaurantInfo({ restaurant }: RestaurantInfoProps) {
                 <div className="text-center px-2">
                     <Clock className="text-secondary mx-auto mb-2" size={20} />
                     <span className="block text-[9px] tracking-wider text-black/55 uppercase">OPENING</span>
-                    <span className="text-xs text-primary mt-1 block">5:00 PM - 11:00 PM</span>
+                    <span className="text-xs text-primary mt-1 block">8:00 AM - 11:00 PM</span>
                 </div>
             </div>
 
