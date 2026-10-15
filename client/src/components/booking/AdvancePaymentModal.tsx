@@ -1,4 +1,5 @@
 import { useState } from "react";
+import qrImage from "../../assets/qr.png";
 
 export function calculateAdvanceAmount(
   specialOccasion: string,
@@ -23,19 +24,12 @@ export function AdvancePaymentModal({
   onClose,
   amount,
   restaurantName,
-  upiId,
   onPaymentConfirmed,
 }: AdvancePaymentModalProps) {
   const [confirming, setConfirming] = useState(false);
+  const [hasPaid, setHasPaid] = useState(false);
 
   if (!isOpen) return null;
-
-  const upiLink = `upi://pay?pa=${upiId}&pn=DashDine&am=${amount}&cu=INR&tn=${encodeURIComponent(
-    `Advance for ${restaurantName}`
-  )}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
-    upiLink
-  )}`;
 
   const handleConfirm = async () => {
     setConfirming(true);
@@ -52,18 +46,32 @@ export function AdvancePaymentModal({
         </p>
 
         <div className="mt-6 flex flex-col items-center border-y border-outline-variant/20 py-6">
-          <img src={qrSrc} alt="Scan to pay" width={200} height={200} />
+          <img src={qrImage} alt="Scan to pay" width={200} height={200} />
           <p className="mt-4 text-3xl font-semibold text-primary">₹{amount}</p>
           <p className="mt-1 text-xs text-black/55">Scan with any UPI app to pay</p>
         </div>
 
+        <div className="flex items-start gap-3 mt-6">
+          <input
+            type="checkbox"
+            id="paymentDone"
+            checked={hasPaid}
+            onChange={(e) => setHasPaid(e.target.checked)}
+            className="mt-1 cursor-pointer"
+          />
+          <label htmlFor="paymentDone" className="text-xs text-black/70 leading-relaxed cursor-pointer select-none">
+            I have completed the payment of ₹{amount}
+          </label>
+        </div>
+
         <button
           onClick={handleConfirm}
-          disabled={confirming}
-          className="mt-6 w-full bg-primary hover:bg-secondary text-white py-3 text-xs font-medium tracking-widest uppercase transition-colors disabled:opacity-50"
+          disabled={confirming || !hasPaid}
+          className="mt-6 w-full bg-primary hover:bg-secondary text-white py-3 text-xs font-medium tracking-widest uppercase transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {confirming ? "Confirming…" : "I've Paid — Confirm Booking"}
+          {confirming ? "Confirming…" : "Confirm Booking"}
         </button>
+
         <button
           onClick={onClose}
           className="mt-3 w-full py-2 text-xs text-black/55 hover:text-primary"

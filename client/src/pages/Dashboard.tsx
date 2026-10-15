@@ -9,6 +9,7 @@ import AuthModal from "../components/AuthModal.tsx";
 import { CalendarIcon, UsersIcon, ClockIcon, MapPinIcon, CalendarDaysIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../lib/api.ts";
+import ConfirmModal from "../components/ConfirmModal.tsx";
 
 export default function Dashboard() {
     const { user } = useAppContext();
@@ -16,6 +17,8 @@ export default function Dashboard() {
     const [bookings, setBookings] = useState<any[]>([]);
     const [recommendations, setRecommendations] = useState<any[]>([]);
     const [loadingBookings, setLoadingBookings] = useState(true);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+    const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
 
     // Fetch user bookings
     useEffect(() => {
@@ -49,18 +52,22 @@ export default function Dashboard() {
         fetchRecommendations();
     }, []);
 
-    const handleCancelBooking = async (bookingId: string) => {
-        if (!window.confirm("Are you sure you want to cancel this booking?")) {
-            return;
-        }
+    const handleCancelBooking = (bookingId: string) => {
+        setBookingToCancel(bookingId);
+        setShowCancelConfirm(true);
+    };
 
+    const confirmCancelBooking = async () => {
+        if (!bookingToCancel) return;
         try {
-            await api.put(`/bookings/${bookingId}/cancel`)
-            // Update local state
-            setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: "cancelled" } : b)))
+            await api.put(`/bookings/${bookingToCancel}/cancel`)
+            setBookings((prev) => prev.map((b) => (b._id === bookingToCancel ? { ...b, status: "cancelled" } : b)))
             toast.success("Reservation cancelled successfully.");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setShowCancelConfirm(false);
+            setBookingToCancel(null);
         }
     };
 
@@ -246,6 +253,15 @@ export default function Dashboard() {
                     )}
                 </div>
             </main>
+
+            <ConfirmModal
+                isOpen={showCancelConfirm}
+                title="Cancel Booking"
+                message="Are you sure you want to cancel this booking?"
+                confirmLabel="Yes, Cancel"
+                onConfirm={confirmCancelBooking}
+                onCancel={() => setShowCancelConfirm(false)}
+            />
 
             <Footer />
         </div>

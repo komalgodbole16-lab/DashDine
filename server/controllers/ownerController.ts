@@ -4,6 +4,9 @@ import { AuthRequest } from "../middlewares/auth.js";
 import { Restaurant } from "../models/restaurant.js";
 import {v2 as cloudinary} from 'cloudinary'
 import { Booking } from "../models/Booking.js";
+import { notifyAdmins } from "../services/notify.js";
+import { notifyUser } from "../services/notify.js";
+
 
 //Helper function to upload buffer to cloudinary
 const uploadTocloudinary = (fileBuffer: Buffer) : Promise<{secure_url: string}> => {
@@ -33,8 +36,7 @@ export const getOwnerRestaurant = async (req: AuthRequest, res : Response): Prom
 // POST /api/owner/restaurant
 export const createOwnerRestaurant = async (req: AuthRequest, res : Response): Promise<void> =>{
     try {
-        // "existing restaurant" wala check hata diya — ab multiple allowed hain
-
+        
         const {name, description, cuisine, priceRange, location, address, chef, tags, availableSlots, totalSeats } = req.body;
 
         if(!name || !description || !cuisine || !priceRange || !location || !address|| !chef){
@@ -78,6 +80,17 @@ export const createOwnerRestaurant = async (req: AuthRequest, res : Response): P
             owner: req.user?._id,
             status: "pending"
         })
+
+        try {
+            await notifyAdmins({
+                type: "RESTAURANT_SUBMITTED",
+                title: "New restaurant awaiting approval",
+                message: `${restaurant.name} needs your approval`,
+                link: "/admin/restaurants",
+            });
+        } catch (err) {
+            console.error("Failed to send notification:", err);
+        }
 
         res.status(201).json(restaurant);
 
@@ -158,31 +171,50 @@ export const getOwnerBookings = async (req: AuthRequest, res : Response): Promis
 }
 
 // update status of a booking — unchanged, already correct
-export const updateBookingStatus = async (req: AuthRequest, res : Response): Promise<void> =>{
+export const updateBookingStatus = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { status } = req.body;
-            if(!status || !["confirmed", "rejected", "cancelled", "completed"].includes(status)){
-            res.status(400).json({message: "Please enter a valid booking status"});
-            return
+        if (!status || !["confirmed", "rejected", "cancelled", "completed"].includes(status)) {
+            res.status(400).json({ message: "Please enter a valid booking status" });
+            return;
         }
 
-      const booking = await Booking.findById(req.params.id)
-      if (!booking){
-        res.status(404).json({message: "Booking not found"});
-        return
-      }
-      const restaurant = await Restaurant.findById(booking.restaurant)
-      if(!restaurant || restaurant.owner.toString() !== req.user?._id.toString()){
-        res.status(401).json({message: "Not authorized to manage this booking"});
-        return
-      }
+        const booking = await Booking.findById(req.params.id);
+        if (!booking) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
 
-      booking.status = status;
-      await booking.save()
-      res.json(booking);
+        const restaurant = await Restaurant.findById(booking.restaurant);
+        if (!restaurant || restaurant.owner.toString() !== req.user?._id.toString()) {
+            res.status(401).json({ message: "Not authorized to manage this booking" });
+            return;
+        }
 
-    } catch (error:any) {
+        booking.status = status;
+        await booking.save();
+
+        // Notify the user about the booking decision
+        if (status === "confirmed" || status === "rejected") {
+            try {
+                const isConfirmed = status === "confirmed";
+
+                await notifyUser(booking.user.toString(), {
+                    type: isConfirmed ? "BOOKING_CONFIRMED" : "BOOKING_REJECTED",
+                    title: isConfirmed ? "Booking confirmed" : "Booking not accepted",
+                    message: isConfirmed
+                        ? `Your table at ${restaurant.name} for ${booking.guests} guests at ${booking.time} is confirmed`
+                        : `Your booking at ${restaurant.name} for ${booking.time} could not be accepted`,
+                    link: "/dashboard",
+                });
+            } catch (err) {
+                console.error("Failed to notify user:", err);
+            }
+        }
+
+        res.json(booking);
+    } catch (error: any) {
         console.error(error);
-        res.status(400).json({message: error.message});
+        res.status(400).json({ message: error.message });
     }
-}
+};

@@ -10,6 +10,7 @@ import restaurantRouter from "./routes/restaurantRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
 import ownerRouter from "./routes/ownerRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/restaurants", restaurantRouter)
 app.use("/api/bookings", bookingRouter)
 app.use("/api/owner", ownerRouter)
 app.use("/api/admin", adminRouter)
+app.use("/api/notifications", notificationRoutes);
 
 //global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction)=>{

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/AppContext.tsx";
 import { Menu, X, LogOut, LayoutDashboard, ShieldCheck } from "lucide-react";
 import logo from "../assets/logo.png";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
     const { user, logout, setAuthModalOpen } = useAppContext();
@@ -73,7 +74,10 @@ export default function Navbar() {
 
                 {/* Auth Actions (Desktop) */}
                 <div className="hidden md:flex items-center gap-6">
-                    {user ? (
+    {user && (
+        <NotificationBell scrolled={scrolled || location.pathname !== "/"} />
+    )}
+    {user ? (
                         <div className="relative">
                             <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}

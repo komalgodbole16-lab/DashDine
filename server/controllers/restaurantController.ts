@@ -11,7 +11,6 @@ import { time } from "node:console";
 // Ger /api/restaurants
 export const getRestaurants = async (req: Request, res: Response): Promise<void> => {
     try {
-         console.log("🔥 NEW CODE RUNNING - VERSION 2");
         const { search, priceRange, rating, location, sort, cuisine } = req.query;
 
         const queryObj: any = { status: "approved" };

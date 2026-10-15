@@ -15,7 +15,7 @@ const userSchema = new Schema<IUser>(
     email: {type : String, required: true, unique: true, trim: true, lowercase: true },
     password: {type : String, required: true, minlength: 6 },
     phone: {type : String, trim: true, minlength: 6 },
-    role: {type : String, enum: ["user" , "admin" , "owner"], defaulat: "user" },
+    role: {type : String, enum: ["user" , "admin" , "owner"], default: "user" },
     },
     {timestamps: true}
 )  
